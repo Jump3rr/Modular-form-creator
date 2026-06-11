@@ -27,6 +27,16 @@ export function ResourcesListSection({
   onSummary,
   onDelete,
 }: Readonly<ResourcesListSectionProps>) {
+  const priorityVariant = (priority: string) => {
+    if (priority === 'high') {
+      return 'warning'
+    }
+    if (priority === 'medium') {
+      return 'info'
+    }
+    return 'neutral'
+  }
+
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       {items.map((resource) => {
@@ -52,7 +62,16 @@ export function ResourcesListSection({
                 <h3 style={{ margin: 0 }}>
                   #{resource.resourceId} {resource.name}
                 </h3>
-                <div style={{ color: '#5e6c76', marginTop: 6 }}>
+                {resource.basicInfo.priority && (
+                  <div
+                    style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}
+                  >
+                    <Badge variant={priorityVariant(resource.basicInfo.priority)}>
+                      Priority: {resource.basicInfo.priority || '-'}
+                    </Badge>
+                  </div>
+                )}
+                <div style={{ color: '#5e6c76', marginTop: 8 }}>
                   Basic Info {basicComplete ? 'done' : 'open'} · Project Details{' '}
                   {projectComplete ? 'done' : 'open'}
                 </div>

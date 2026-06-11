@@ -66,8 +66,7 @@ export function ResourcesPage() {
 
       <ResourcesPagination
         pagination={pagination}
-        onPrevious={() => void loadResources(pagination.page - 1)}
-        onNext={() => void loadResources(pagination.page + 1)}
+        onPageChange={(page) => void loadResources(page)}
       />
 
       {error ? <Notice $variant="error">{error}</Notice> : null}
