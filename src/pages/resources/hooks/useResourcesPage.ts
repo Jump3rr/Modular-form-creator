@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useDeferredValue, useEffect, useState } from 'react'
 import { resourceApi, type ResourceRecord } from '../../../api/resources'
 
 export interface ResourcesFilters {
@@ -35,8 +35,12 @@ export function useResourcesPage() {
   const [resourceNameError, setResourceNameError] = useState<string | null>(null)
   const [resourceName, setResourceName] = useState('')
   const [filters, setFilters] = useState<ResourcesFilters>(defaultFilters)
+  const deferredName = useDeferredValue(filters.name)
 
-  const loadResources = async (nextPage = pagination.page) => {
+  const loadResources = async (
+    nextPage = pagination.page,
+    activeFilters: ResourcesFilters = filters,
+  ) => {
     setLoading(true)
     setError(null)
 
@@ -44,14 +48,14 @@ export function useResourcesPage() {
       const query = new URLSearchParams()
       query.set('page', String(nextPage))
       query.set('pageSize', String(pagination.pageSize))
-      query.set('sortOrder', filters.sortOrder)
+      query.set('sortOrder', activeFilters.sortOrder)
 
-      if (filters.status) {
-        query.set('status', filters.status)
+      if (activeFilters.status) {
+        query.set('status', activeFilters.status)
       }
 
-      if (filters.name.trim()) {
-        query.set('name', filters.name.trim())
+      if (activeFilters.name.trim()) {
+        query.set('name', activeFilters.name.trim())
       }
 
       const response = await resourceApi.listResources(query)
@@ -67,8 +71,8 @@ export function useResourcesPage() {
   }
 
   useEffect(() => {
-    void loadResources(1)
-  }, [filters.status, filters.name, filters.sortOrder])
+    void loadResources(1, { ...filters, name: deferredName })
+  }, [filters.status, filters.sortOrder, deferredName])
 
   const createResource = async () => {
     if (!resourceName.trim()) {
