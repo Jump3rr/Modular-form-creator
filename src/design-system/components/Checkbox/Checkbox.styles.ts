@@ -11,7 +11,15 @@ export const Wrapper = styled.div`
 /** Native checkbox visually hidden but still accessible. */
 export const HiddenInput = styled.input`
   position: absolute;
+  left: 0;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
   opacity: 0;
+  z-index: 1;
 
   &:focus-visible + span {
     outline: 3px solid rgba(31, 122, 140, 0.2);
